@@ -14,7 +14,7 @@
 #define TOY_OPS
 
 include "mlir/IR/OpBase.td"
-include "mlir/IR/FunctionInterfaces.td"
+include "mlir/Interfaces/FunctionInterfaces.td"
 include "mlir/IR/SymbolInterfaces.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/Interfaces/CallInterfaces.td"
@@ -136,9 +136,10 @@ def CastOp : Toy_Op<"cast", [
 // FuncOp
 //===----------------------------------------------------------------------===//
 
-def FuncOp : Toy_Op<"func", [DeclareOpInterfaceMethods<CallableOpInterface>,
-    FunctionOpInterface, IsolatedFromAbove
-    ]> {
+def FuncOp : Toy_Op<"func", [
+    FunctionOpInterface,
+    IsolatedFromAbove
+  ]> {
   let summary = "user defined function operation";
   let description = [{
     The "toy.func" operation represents a user defined function. These are
@@ -168,18 +169,33 @@ def FuncOp : Toy_Op<"func", [DeclareOpInterfaceMethods<CallableOpInterface>,
     "StringRef":$name, "FunctionType":$type,
     CArg<"ArrayRef<NamedAttribute>", "{}">:$attrs)
   >];
-
   let extraClassDeclaration = [{
-    //===------------------------------------------------------------------===//
-    // FunctionOpInterface Methods
-    //===------------------------------------------------------------------===//
+      //===------------------------------------------------------------------===//
+      // FunctionOpInterface Methods
+      //===------------------------------------------------------------------===//
 
-    /// Returns the argument types of this function.
-    ArrayRef<Type> getArgumentTypes() { return getFunctionType().getInputs(); }
+      /// 显式提供带完整命名空间的方法，满足 FunctionOpInterface 的契约
+      ::llvm::ArrayRef<::mlir::Type> getArgumentTypes() {
+        return getFunctionType().getInputs();
+      }
+      ::llvm::ArrayRef<::mlir::Type> getResultTypes() {
+        return getFunctionType().getResults();
+      }
 
-    /// Returns the result types of this function.
-    ArrayRef<Type> getResultTypes() { return getFunctionType().getResults(); }
-  }];
+      /// 返回函数体区域
+      ::mlir::Region *getCallableRegion() { return &getBody(); }
+
+      /// 供给 CallableOpInterface 使用
+      ::llvm::ArrayRef<::mlir::Type> getCallableResults() {
+        return getResultTypes();
+      }
+      ::mlir::ArrayAttr getCallableArgAttrs() {
+        return getArgAttrs().value_or(nullptr);
+      }
+      ::mlir::ArrayAttr getCallableResAttrs() {
+        return getResAttrs().value_or(nullptr);
+      }
+    }];
 
   let hasCustomAssemblyFormat = 1;
   let skipDefaultBuilders = 1;
@@ -223,6 +239,17 @@ def GenericCallOp : Toy_Op<"generic_call",
   let builders = [
     OpBuilder<(ins "StringRef":$callee, "ArrayRef<Value>":$arguments)>
   ];
+let extraClassDeclaration = [{
+    //===------------------------------------------------------------------===//
+    // ArgAndResultAttrsOpInterface Methods
+    //===------------------------------------------------------------------===//
+    ::mlir::ArrayAttr getArgAttrsAttr() { return nullptr; }
+    ::mlir::ArrayAttr getResAttrsAttr() { return nullptr; }
+    void setArgAttrsAttr(::mlir::ArrayAttr attrs) {}
+    void setResAttrsAttr(::mlir::ArrayAttr attrs) {}
+    ::mlir::Attribute removeArgAttrsAttr() { return nullptr; }
+    ::mlir::Attribute removeResAttrsAttr() { return nullptr; }
+  }];
 }
 
 //===----------------------------------------------------------------------===//
@@ -297,8 +324,7 @@ def ReshapeOp : Toy_Op<"reshape"> {
 // ReturnOp
 //===----------------------------------------------------------------------===//
 
-def ReturnOp : Toy_Op<"return", [Pure, HasParent<"FuncOp">,
-                                 Terminator]> {
+def ReturnOp : Toy_Op<"return", [Pure, HasParent<"FuncOp">, Terminator]> {
   let summary = "return operation";
   let description = [{
     The "return" operation represents a return operation within a function.
@@ -314,24 +340,19 @@ def ReturnOp : Toy_Op<"return", [Pure, HasParent<"FuncOp">,
     ```
   }];
 
-  // The return operation takes an optional input operand to return. This
-  // value must match the return type of the enclosing function.
   let arguments = (ins Variadic<F64Tensor>:$input);
 
-  // The return operation only emits the input in the format if it is present.
   let assemblyFormat = "($input^ `:` type($input))? attr-dict ";
 
-  // Allow building a ReturnOp with no return operand.
+  // 显式传入空 ValueRange 构建无返回值的 return
   let builders = [
-    OpBuilder<(ins), [{ build($_builder, $_state, std::nullopt); }]>
+    OpBuilder<(ins), [{ build($_builder, $_state, ::mlir::ValueRange{}); }]>
   ];
 
-  // Provide extra utility definitions on the c++ operation class definition.
   let extraClassDeclaration = [{
     bool hasOperand() { return getNumOperands() != 0; }
   }];
 
-  // Invoke a static verify method to verify this return operation.
   let hasVerifier = 1;
 }
 

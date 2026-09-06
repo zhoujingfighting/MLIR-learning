@@ -12,19 +12,19 @@
 //===----------------------------------------------------------------------===//
 
 #include "MLIRGen.h"
+#include "AST.h"
+#include "Dialect.h"
 #include "mlir/IR/Block.h"
 #include "mlir/IR/Diagnostics.h"
 #include "mlir/IR/Value.h"
 #include "mlir/Support/LogicalResult.h"
-#include "AST.h"
-#include "Dialect.h"
 
+#include "Lexer.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/BuiltinTypes.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/IR/Verifier.h"
-#include "Lexer.h"
 
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/ScopedHashTable.h"
@@ -122,7 +122,7 @@ private:
     // Arguments type are uniformly unranked tensors.
     llvm::SmallVector<mlir::Type, 4> argTypes(proto.getArgs().size(),
                                               getType(VarType{}));
-    auto funcType = builder.getFunctionType(argTypes, std::nullopt);
+    auto funcType = builder.getFunctionType(argTypes, {});
     return builder.create<mlir::toy::FuncOp>(location, proto.getName(),
                                              funcType);
   }

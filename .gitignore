@@ -1,3 +1,4 @@
 build*
 .cache
 */*.inc
+test/lit.site.cfg.py

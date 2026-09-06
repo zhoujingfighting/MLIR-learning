@@ -18,6 +18,8 @@
 #include "standalone/StandaloneDialect.h"
 #include "standalone/StandaloneOps.h"
 
+#include "mlir/Conversion/MemRefToLLVM/MemRefToLLVM.h"
+
 #include "standalone/StandalonePasses.h"
 
 #include "mlir/Conversion/AffineToStandard/AffineToStandard.h"
@@ -147,7 +149,7 @@ void StandaloneToLLVMLoweringPass::runOnOperation() {
   // populateSCFToControlFlowConversionPatterns(patterns);
   mlir::arith::populateArithToLLVMConversionPatterns(typeConverter, patterns);
 
-  mlir::populateMemRefToLLVMConversionPatterns(typeConverter, patterns);
+  mlir::populateFinalizeMemRefToLLVMConversionPatterns(typeConverter, patterns);
   mlir::cf::populateControlFlowToLLVMConversionPatterns(typeConverter,
                                                         patterns);
   populateFuncToLLVMConversionPatterns(typeConverter, patterns);

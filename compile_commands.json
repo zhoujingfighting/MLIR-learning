@@ -1,0 +1,38 @@
+[
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -o others/CMakeFiles/commandline.dir/commandline.cpp.o -c /Users/zhoujing/github/MLIR-learning/others/commandline.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/others/commandline.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/others/CMakeFiles/commandline.dir/commandline.cpp.o"
+},
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/Users/zhoujing/github/MLIR-learning/build_standalone/standalone -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -fno-exceptions -funwind-tables -o standalone/CMakeFiles/obj.MLIRStandalone.dir/StandaloneDialect.cpp.o -c /Users/zhoujing/github/MLIR-learning/standalone/StandaloneDialect.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/standalone/StandaloneDialect.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/standalone/CMakeFiles/obj.MLIRStandalone.dir/StandaloneDialect.cpp.o"
+},
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/Users/zhoujing/github/MLIR-learning/build_standalone/standalone -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -fno-exceptions -funwind-tables -o standalone/CMakeFiles/obj.MLIRStandalone.dir/StandaloneOps.cpp.o -c /Users/zhoujing/github/MLIR-learning/standalone/StandaloneOps.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/standalone/StandaloneOps.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/standalone/CMakeFiles/obj.MLIRStandalone.dir/StandaloneOps.cpp.o"
+},
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/Users/zhoujing/github/MLIR-learning/build_standalone/standalone -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -fno-exceptions -funwind-tables -o standalone/CMakeFiles/obj.MLIRStandalone.dir/LowerToLLVM.cpp.o -c /Users/zhoujing/github/MLIR-learning/standalone/LowerToLLVM.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/standalone/LowerToLLVM.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/standalone/CMakeFiles/obj.MLIRStandalone.dir/LowerToLLVM.cpp.o"
+},
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/Users/zhoujing/github/MLIR-learning/build_standalone/standalone -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -fno-exceptions -funwind-tables -o standalone/CMakeFiles/obj.MLIRStandalone.dir/createSimpleAttr.cpp.o -c /Users/zhoujing/github/MLIR-learning/standalone/createSimpleAttr.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/standalone/createSimpleAttr.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/standalone/CMakeFiles/obj.MLIRStandalone.dir/createSimpleAttr.cpp.o"
+},
+{
+  "directory": "/Users/zhoujing/github/MLIR-learning/build_standalone",
+  "command": "/usr/bin/c++ -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/Users/zhoujing/github/MLIR-learning/build_standalone/standalone -isystem /opt/homebrew/Cellar/llvm/22.1.8_2/include -isystem /Users/zhoujing/github/MLIR-learning -isystem /Users/zhoujing/github/MLIR-learning/include -isystem /opt/homebrew/include  -fPIC -fvisibility-inlines-hidden -Werror=date-time -Werror=unguarded-availability-new -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wmissing-field-initializers -Wimplicit-fallthrough -Wcovered-switch-default -Wno-noexcept-type -Wnon-virtual-dtor -Wdelete-non-virtual-dtor -Wsuggest-override -Wstring-conversion -Wno-pass-failed -Wmisleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -g -std=c++17 -arch arm64 -fno-exceptions -funwind-tables -o standalone-opt/CMakeFiles/standalone-opt.dir/standalone-opt.cpp.o -c /Users/zhoujing/github/MLIR-learning/standalone-opt/standalone-opt.cpp",
+  "file": "/Users/zhoujing/github/MLIR-learning/standalone-opt/standalone-opt.cpp",
+  "output": "/Users/zhoujing/github/MLIR-learning/build_standalone/standalone-opt/CMakeFiles/standalone-opt.dir/standalone-opt.cpp.o"
+}
+]

@@ -15,8 +15,8 @@
 
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/BuiltinTypes.h"
-#include "mlir/IR/FunctionImplementation.h"
 #include "mlir/IR/OpImplementation.h"
+#include "mlir/Interfaces/FunctionImplementation.h"
 #include "mlir/Transforms/InliningUtils.h"
 #include <cassert>
 #include <llvm/ADT/STLExtras.h>
@@ -53,21 +53,23 @@ public:
 
   // Above three isLegalToInline functions are just transformation hooks
   void handleTerminator(Operation *op,
-                        ArrayRef<Value> valueToRepl) const final {
+                        mlir::ValueRange valueToRepl) const final {
     // Only "toy.return" needs to be handled here
     auto returnOp = cast<ReturnOp>(op);
 
     // Replace function call return values with ReturnOp result
     assert(returnOp->getNumOperands() == valueToRepl.size());
 
-    for(const auto &it : llvm::enumerate(returnOp->getOperands())) {
+    for (const auto &it : llvm::enumerate(returnOp->getOperands())) {
       // Replace all uses
       valueToRepl[it.index()].replaceAllUsesWith(it.value());
     }
   }
 
-  //   /// Attempts to materialize a conversion for a type mismatch between a call
-  // /// from this dialect, and a callable region. This method should generate an
+  //   /// Attempts to materialize a conversion for a type mismatch between a
+  //   call
+  // /// from this dialect, and a callable region. This method should generate
+  // an
   // /// operation that takes 'input' as the only operand, and produces a single
   // /// result of 'resultType'. If a conversion can not be generated, nullptr
   // /// should be returned.
@@ -215,6 +217,36 @@ mlir::LogicalResult ConstantOp::verify() {
   return mlir::success();
 }
 
+// void ReturnOp::build(mlir::OpBuilder &builder, mlir::OperationState &state,
+//                      mlir::Value value) {
+//   if (value)
+//     state.addOperands(value);
+// }
+mlir::LogicalResult ReturnOp::verify() {
+  // 获取父节点 FuncOp (由 HasParent<"FuncOp"> 保证合法性)
+  auto function = cast<FuncOp>((*this)->getParentOp());
+
+  // 获取外层函数的返回值类型列表
+  llvm::ArrayRef<mlir::Type> results = function.getCallableResults();
+
+  // 1. 验证返回值数量是否一致 (Toy 语言中要么是 0 个，要么是 1 个)
+  if (getNumOperands() != results.size())
+    return emitOpError() << "has " << getNumOperands()
+                         << " operands, but enclosing function (@"
+                         << function.getName() << ") returns "
+                         << results.size();
+
+  // 2. 如果有返回值，验证操作数类型与外层函数返回值类型是否匹配
+  if (hasOperand()) {
+    mlir::Type operandType = (*this)->getOperand(0).getType();
+    if (operandType != results[0])
+      return emitOpError() << "type of return operand (" << operandType
+                           << ") doesn't match function result type ("
+                           << results[0] << ")";
+  }
+
+  return mlir::success();
+}
 //===----------------------------------------------------------------------===//
 // AddOp
 //===----------------------------------------------------------------------===//
@@ -250,12 +282,16 @@ CallInterfaceCallable GenericCallOp::getCallableForCallee() {
 /// Set the callee for the generic call operation, this is required by the call
 /// interface.
 void GenericCallOp::setCalleeFromCallable(CallInterfaceCallable callee) {
-  (*this)->setAttr("callee", callee.get<SymbolRefAttr>());
+  (*this)->setAttr("callee", llvm::cast<mlir::SymbolRefAttr>(callee));
 }
 
 /// Get the argument operands to the called function, this is required by the
 /// call interface.
 Operation::operand_range GenericCallOp::getArgOperands() { return getInputs(); }
+
+::mlir::MutableOperandRange GenericCallOp::getArgOperandsMutable() {
+  return getInputsMutable();
+}
 //===----------------------------------------------------------------------===//
 // FuncOp
 //===----------------------------------------------------------------------===//
@@ -291,27 +327,7 @@ void FuncOp::print(mlir::OpAsmPrinter &p) {
       p, *this, /*isVariadic=*/false, getFunctionTypeAttrName(),
       getArgAttrsAttrName(), getResAttrsAttrName());
 }
-/// Returns the region on the function operation that is callable.
-mlir::Region *FuncOp::getCallableRegion() { return &getBody(); }
 
-/// Returns the results types that the callable region produces when
-/// executed.
-llvm::ArrayRef<mlir::Type> FuncOp::getCallableResults() {
-  return getFunctionType().getResults();
-}
-
-/// Returns the argument attributes for all callable region arguments or
-/// null if there are none.
-ArrayAttr FuncOp::getCallableArgAttrs() {
-  return getArgAttrs().value_or(nullptr);
-}
-
-/// Returns the result attributes for all callable region results or
-// null if there are none.
-ArrayAttr FuncOp::getCallableResAttrs() {
-
-  return getResAttrs().value_or(nullptr);
-}
 //===----------------------------------------------------------------------===//
 // MulOp
 //===----------------------------------------------------------------------===//
@@ -333,39 +349,39 @@ void MulOp::print(mlir::OpAsmPrinter &p) { printBinaryOp(p, *this); }
 // ReturnOp
 //===----------------------------------------------------------------------===//
 
-mlir::LogicalResult ReturnOp::verify() {
-  // We know that the parent operation is a function, because of the 'HasParent'
-  // trait attached to the operation definition.
-  auto function = cast<FuncOp>((*this)->getParentOp());
+// mlir::LogicalResult ReturnOp::verify() {
+//   // We know that the parent operation is a function, because of the 'HasParent'
+//   // trait attached to the operation definition.
+//   auto function = cast<FuncOp>((*this)->getParentOp());
 
-  /// ReturnOps can only have a single optional operand.
-  if (getNumOperands() > 1)
-    return emitOpError() << "expects at most 1 return operand";
+//   /// ReturnOps can only have a single optional operand.
+//   if (getNumOperands() > 1)
+//     return emitOpError() << "expects at most 1 return operand";
 
-  // The operand number and types must match the function signature.
-  const auto &results = function.getFunctionType().getResults();
-  if (getNumOperands() != results.size())
-    return emitOpError() << "does not return the same number of values ("
-                         << getNumOperands() << ") as the enclosing function ("
-                         << results.size() << ")";
+//   // The operand number and types must match the function signature.
+//   const auto &results = function.getFunctionType().getResults();
+//   if (getNumOperands() != results.size())
+//     return emitOpError() << "does not return the same number of values ("
+//                          << getNumOperands() << ") as the enclosing function ("
+//                          << results.size() << ")";
 
-  // If the operation does not have an input, we are done.
-  if (!hasOperand())
-    return mlir::success();
+//   // If the operation does not have an input, we are done.
+//   if (!hasOperand())
+//     return mlir::success();
 
-  auto inputType = *operand_type_begin();
-  auto resultType = results.front();
+//   auto inputType = *operand_type_begin();
+//   auto resultType = results.front();
 
-  // Check that the result type of the function matches the operand type.
-  if (inputType == resultType ||
-      llvm::isa<mlir::UnrankedTensorType>(inputType) ||
-      llvm::isa<mlir::UnrankedTensorType>(resultType))
-    return mlir::success();
+//   // Check that the result type of the function matches the operand type.
+//   if (inputType == resultType ||
+//       llvm::isa<mlir::UnrankedTensorType>(inputType) ||
+//       llvm::isa<mlir::UnrankedTensorType>(resultType))
+//     return mlir::success();
 
-  return emitError() << "type of return operand (" << inputType
-                     << ") doesn't match function result type (" << resultType
-                     << ")";
-}
+//   return emitError() << "type of return operand (" << inputType
+//                      << ") doesn't match function result type (" << resultType
+//                      << ")";
+// }
 
 //===----------------------------------------------------------------------===//
 // TransposeOp

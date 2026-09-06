@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 project(mlir-learning VERSION 1.0.0)
 
+set(LLVM_CHECK_SOURCE_FILE_LIST OFF CACHE BOOL "" FORCE)
 # We will use llvm library, so we need to link llvm libraries
 
 set(LT_LLVM_INCLUDE_DIR "${LT_LLVM_INSTALL_DIR}/include")
@@ -57,12 +60,6 @@ link_libraries(
 add_subdirectory(include)
 add_subdirectory(others)
 add_subdirectory(test)
-set(CMAKE_TARGET "toy" CACHE STRINGS "Default target")
-
-if(${CMAKE_TARGET} STREQUAL "toy")
-  include(toy.cmake)
-elseif(${CMAKE_TARGET} STREQUAL "standalone")
-  include(standalone.cmake)
-else()
-  message("Not suppoted target: ${CMAKE_TARGET}")
-endif()
+add_subdirectory(standalone)
+add_subdirectory(standalone-opt)
+add_subdirectory(toy)

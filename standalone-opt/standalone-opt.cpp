@@ -20,6 +20,7 @@
 #include "llvm/Support/InitLLVM.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/ToolOutputFile.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include <mlir/Parser/Parser.h>
 
 #include "standalone/StandaloneDialect.h"
@@ -58,7 +59,8 @@ int loadAndProcessMLIR(mlir::MLIRContext &context,
 
   // Register passes to be applied in this compile process
   mlir::PassManager passManager(&context);
-  mlir::applyPassManagerCLOptions(passManager);
+if (mlir::failed(mlir::applyPassManagerCLOptions(passManager)))
+  return 1;
   //   return 4;
 
   // passManager.addPass(mlir::createCanonicalizerPass());
